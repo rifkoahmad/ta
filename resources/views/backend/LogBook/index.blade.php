@@ -33,9 +33,11 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <div class="mt-3">
-                                    <a href="{{ route('logbook.create') }}" class="btn btn-success">
-                                        <i class="bi bi-plus-circle"></i> Add
-                                    </a>
+                                    @if (!$pkl_mahasiswa)
+                                        <a href="{{ route('logbook.create') }}" class="btn btn-success">
+                                            <i class="bi bi-plus-circle"></i> Add
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-body">

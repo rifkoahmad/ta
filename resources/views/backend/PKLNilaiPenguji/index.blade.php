@@ -1,14 +1,13 @@
 @extends('template.index')
-@section('title', 'Booking')
+@section('title', 'PKL Nilai')
 @section('content')
-    <!-- Main Content -->
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Booking</h1>
+                <h1>PKL Nilai</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('dashboard') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Data Booking</div>
+                    <div class="breadcrumb-item">Data PKL Nilai</div>
                 </div>
             </div>
 
@@ -23,9 +22,9 @@
             @endif
 
             <div class="section-body">
-                <h2 class="section-title">Table Booking</h2>
+                <h2 class="section-title">Table PKL Nilai</h2>
                 <p class="section-lead">
-                    Data booking kampus vokasi Politeknik Negeri Padang
+                    Data nilai Praktik Kerja Lapangan (PKL) mahasiswa
                 </p>
 
                 <div class="row">
@@ -33,9 +32,12 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <div class="mt-3">
-                                    <a href="{{ route('booking.create') }}" class="btn btn-success">
-                                        <i class="bi bi-plus-circle"></i> Add
-                                    </a>
+                                    @if ($pkl)
+                                        <a href="{{ route('pkl-nilai-penguji.create') }}" class="btn btn-success">
+                                            <i class="bi bi-plus-circle"></i> Add
+                                        </a>
+                                    @endif
+
                                 </div>
                             </div>
                             <div class="card-body">
@@ -44,36 +46,35 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Ruangan</th>
-                                                <th>Sesi</th>
-                                                <th>Nama Mahasiswa</th>
-                                                <th>Tipe</th>
-                                                <th>Tgl Booking</th>
-                                                <th>Status Booking</th>
+                                                <th>Mahasiswa</th>
+                                                <th>Dosen</th>
+                                                <th>Nilai</th>
+                                                <th>Sebagai</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($booking as $item)
+                                            @foreach ($pkl_nilai as $item)
                                                 <tr>
                                                     <td class="align-middle">{{ $loop->iteration }}</td>
-                                                    <td class="align-middle">{{ $item->ruangan->kode_ruangan }}</td>
-                                                    <td class="align-middle">{{ $item->sesi->periode_sesi }}</td>
-                                                    <td class="align-middle">{{ $item->mahasiswa->nama_mahasiswa }}</td>
                                                     <td class="align-middle">
-                                                        {{ $item->tipe == 1 ? 'PKL' : ($item->tipe == 2 ? 'SEMPRO' : ($item->tipe == 3 ? 'TA' : 'Unknown')) }}
+                                                        {{ $item->pkl_mahasiswa->usulan->mahasiswa->nama_mahasiswa }}
                                                     </td>
-                                                    <td class="align-middle">{{ $item->tgl_booking }}</td>
+                                                    <td class="align-middle">{{ $item->dosen->nama_dosen }}</td>
                                                     <td class="align-middle">
-                                                        {{ $item->status_booking == 0 ? 'Cancel' : ($item->status_booking == 1 ? 'Booking' : 'Selesai') }}
+                                                        @php
+                                                            $decodedNilai = json_decode($item->nilai, true);
+                                                        @endphp
+                                                        {{ is_array($decodedNilai) && isset($decodedNilai['total']) ? $decodedNilai['total'] : 'Nilai tidak valid' }}
                                                     </td>
+                                                    <td class="align-middle">{{ $item->sebagai }}</td>
                                                     <td class="align-middle">
                                                         <div class="d-flex mt-1">
-                                                            <a href="{{ route('booking.edit', $item->id_booking) }}"
-                                                                class="btn btn-outline-primary"><i class="fas fa-edit"></i>
-                                                            </a>
+                                                            <a href="{{ route('pkl-nilai-penguji.edit', $item->id_pkl_nilai) }}"
+                                                                class="btn btn-outline-primary"><i
+                                                                    class="fas fa-edit"></i></a>
                                                             <form
-                                                                action="{{ route('booking.destroy', $item->id_booking) }}"
+                                                                action="{{ route('pkl-nilai-penguji.destroy', $item->id_pkl_nilai) }}"
                                                                 method="POST" class="d-inline"
                                                                 onsubmit="return confirm('Anda yakin ingin menghapus data ini?')">
                                                                 @csrf

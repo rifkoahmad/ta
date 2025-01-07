@@ -9,22 +9,32 @@ use App\Models\PKLMahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PKLNilaiController extends Controller
+class PKLNilaiPengujiController extends Controller
 {
     public function index()
     {
-        return view('backend.PKLNilai.index', [
-            'pkl_nilai' => PKLNilai::with('pkl_mahasiswa', 'dosen')->get(),
-            'pkl_mahasiswa' => PKLMahasiswa::get(),
-            'dosen' => Dosen::get(),
+        $id_user = auth()->id();
+        $id_dosen = Dosen::where('user_id', $id_user)->value('id_dosen');
+        $nilai = PKLNilai::with('pkl_mahasiswa', 'dosen')->where('dosen_id', $id_dosen)
+        ->where('sebagai', 'penguji')
+        ->get();
+        $pklmhs = PKLMahasiswa::where('penguji_id', $id_dosen)->get();
+
+        return view('backend.PKLNilaiPenguji.index', [
+            'pkl_nilai' => $nilai,
+            'pkl' => $pklmhs
         ]);
     }
 
     public function create()
     {
-        return view('backend.PKLNilai.create', [
-            'pkl_mahasiswa' => PKLMahasiswa::get(),
-            'dosen' => Dosen::get(),
+        $id_user = auth()->user()->id;
+        $id_dosen = Dosen::where('user_id', $id_user)->first()->id_dosen;
+        $pklmhs = PKLMahasiswa::where('penguji_id', $id_dosen)->get();
+        // dd($pklmhs->toArray());
+        return view('backend.PKLNilaiPenguji.create', [
+            'pkl_mahasiswa' => $pklmhs,
+            'dosen' => $id_dosen,
         ]);
     }
 
@@ -67,7 +77,7 @@ class PKLNilaiController extends Controller
             'sebagai' => $request->sebagai,
         ]);
 
-        return redirect()->route('pkl-nilai.index')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('pkl-nilai-penguji.index')->with('success', 'Data berhasil disimpan');
     }
 
     public function edit(string $id_pkl_nilai)
@@ -76,7 +86,7 @@ class PKLNilaiController extends Controller
         $pklMahasiswa = PKLMahasiswa::get();
         $dosen = Dosen::get();
 
-        return view('backend.PKLNilai.edit', [
+        return view('backend.PKLNilaiPenguji.edit', [
             'pklNilai' => $pklNilai,
             'pkl_mahasiswa' => $pklMahasiswa,
             'dosen' => $dosen,
@@ -86,15 +96,12 @@ class PKLNilaiController extends Controller
     public function update(Request $request, string $id_pkl_nilai)
     {
         $request->validate([
-            'pkl_mahasiswa_id' => 'required|exists:pkl_mahasiswa,id_pkl_mahasiswa',
-            'dosen_id' => 'required|exists:dosen,id_dosen',
             'bahasa' => 'required|numeric|min:0|max:100',
             'analisis' => 'required|numeric|min:0|max:100',
             'sikap' => 'required|numeric|min:0|max:100',
             'komunikasi' => 'required|numeric|min:0|max:100',
             'penyajian' => 'required|numeric|min:0|max:100',
             'penguasaan' => 'required|numeric|min:0|max:100',
-            'sebagai' => 'required|in:pembimbing,penguji',
         ]);
 
         $pklNilai = PKLNilai::findOrFail($id_pkl_nilai);
@@ -111,13 +118,10 @@ class PKLNilaiController extends Controller
         $nilai['total'] = array_sum($nilai);
 
         $pklNilai->update([
-            'pkl_mahasiswa_id' => $request->pkl_mahasiswa_id,
-            'dosen_id' => $request->dosen_id,
             'nilai' => json_encode($nilai),
-            'sebagai' => $request->sebagai,
         ]);
 
-        return redirect()->route('pkl-nilai.index')->with('success', 'Data berhasil diperbarui.');
+        return redirect()->route('pkl-nilai-penguji.index')->with('success', 'Data berhasil diperbarui.');
     }
 
 
@@ -126,6 +130,6 @@ class PKLNilaiController extends Controller
     {
         $pklNilai = PKLNilai::findOrFail($id_pkl_nilai);
         $pklNilai->delete();
-        return redirect()->route('pkl-nilai.index')->with('success', 'Data berhasil dihapus.');
+        return redirect()->route('pkl-nilai-penguji.index')->with('success', 'Data berhasil dihapus.');
     }
 }

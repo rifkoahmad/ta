@@ -66,6 +66,8 @@ class Kernel extends HttpKernel
         'isLogin' => \App\Http\Middleware\isLogin::class,
         'isTamu' => \App\Http\Middleware\isTamu::class,
         'addUserToView' => \App\Http\Middleware\AddUserToView::class,
-        'role' => \App\Http\Middleware\role::class
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
     ];
 }

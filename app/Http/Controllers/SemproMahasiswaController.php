@@ -11,30 +11,27 @@ class SemproMahasiswaController extends Controller
 {
     public function index()
     {
-        $sempro = SemproMahasiswa::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji'])->get();
+        $id_user = auth()->user()->id;
+        $id_mahasiswa = Mahasiswa::where('user_id', $id_user)->first()->id_mahasiswa;
+        $sempro = SemproMahasiswa::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji'])->where('mahasiswa_id', $id_mahasiswa)->get();
         return view('backend.SemproMahasiswa.index', compact('sempro'));
     }
 
     public function create()
     {
-        $mahasiswa = Mahasiswa::all();
-        return view('backend.SemproMahasiswa.create', compact('mahasiswa'));
+        $id_user = auth()->user()->id;
+        $id_mahasiswa = Mahasiswa::where('user_id', $id_user)->first()->id_mahasiswa;
+        return view('backend.SemproMahasiswa.create', compact('id_mahasiswa'));
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $validatedData = $request->validate([
-            'nama_mahasiswa' => 'required|string',
+            'id_mahasiswa' => 'required|exists:mahasiswa,id_mahasiswa',
             'judul_sempro' => 'required|string',
             'file_sempro' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
-
-        $mahasiswa = Mahasiswa::where('nama_mahasiswa', $request->nama_mahasiswa)->first();
-        if (!$mahasiswa) {
-            return redirect()->back()
-                ->withErrors(['nama_mahasiswa' => 'Nama mahasiswa tidak ditemukan dalam database.'])
-                ->withInput();
-        }
 
         if ($request->hasFile('file_sempro')) {
             $file = $request->file('file_sempro');
@@ -43,7 +40,7 @@ class SemproMahasiswaController extends Controller
         }
 
         SemproMahasiswa::create([
-            'mahasiswa_id' => $mahasiswa->id_mahasiswa,
+            'mahasiswa_id' => $request->id_mahasiswa,
             'judul_sempro' => $validatedData['judul_sempro'],
             'file_sempro' => $fileName ?? null,
         ]);

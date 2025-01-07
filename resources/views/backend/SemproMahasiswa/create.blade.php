@@ -24,16 +24,7 @@
                                     <h4>Form Tambah Sempro Mahasiswa</h4>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Nama Mahasiswa -->
-                                    <div class="form-group">
-                                        <label for="nama_mahasiswa">Nama Mahasiswa</label>
-                                        <input type="text" id="nama_mahasiswa" name="nama_mahasiswa"
-                                            class="form-control @error('nama_mahasiswa') is-invalid @enderror"
-                                            value="{{ old('nama_mahasiswa') }}" placeholder="Masukkan Nama Mahasiswa">
-                                        @error('nama_mahasiswa')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                    <input type="hidden" name="id_mahasiswa" value="{{$id_mahasiswa}}">
 
                                     <!-- Judul Sempro -->
                                     <div class="form-group">

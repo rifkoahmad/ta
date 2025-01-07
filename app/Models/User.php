@@ -50,11 +50,11 @@ class User extends Authenticatable
     // untuk verif email diform mahasiswa
     public function mahasiswa()
     {
-        return $this->hasMany(Mahasiswa::class, 'user_id');
+        return $this->hasOne(Mahasiswa::class, 'user_id');
     }
 
     public function dosen()
     {
-        return $this->hasMany(Dosen::class, 'user_id');
+        return $this->hasOne(Dosen::class, 'user_id');
     }
 }

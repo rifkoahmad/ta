@@ -2,6 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Dosen;
+use App\Models\Mahasiswa;
+use App\Models\Pimpinan;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -14,55 +18,29 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'lihat-jurusan']);
-        Permission::create(['name' => 'lihat-prodi']);
-        Permission::create(['name' => 'lihat-jabatan_pimpinan']);
-        Permission::create(['name' => 'lihat-semester_tahun_akademik']);
-        Permission::create(['name' => 'lihat-kelas']);
-        Permission::create(['name' => 'lihat-mahasiswa']);
-        Permission::create(['name' => 'lihat-golongan']);
-        Permission::create(['name' => 'lihat-dosen']);
-        Permission::create(['name' => 'lihat-pimpinan']);
-        Permission::create(['name' => 'lihat-ruangan']);
-        Permission::create(['name' => 'lihat-sesi']);
-        Permission::create(['name' => 'lihat-tempat_pkl']);
-        Permission::create(['name' => 'lihat-role_tempat_pkl']);
-        Permission::create(['name' => 'lihat-usulan_tempat_pkl']);
-        Permission::create(['name' => 'lihat-usulan_tempat_pkl']);
-        Permission::create(['name' => 'lihat-verifikasi_tempat_pkl']);
-        Permission::create(['name' => 'lihat-mahasiswa_pkl']);
-        Permission::create(['name' => 'lihat-pkl_nilai']);
-        Permission::create(['name' => 'lihat-logbook']);
-        Permission::create(['name' => 'lihat-logbook_pem']);
+        $roles = ['dosenPembimbing', 'pimpinanProdi', 'dosenPenguji', 'mahasiswa', 'admin'];
+        foreach ($roles as $role) {
+            Role::firstOrCreate(['name' => $role]);
+        }
 
-        // Role::create(['name' => 'admin'])->givePermissionTo(Permission::all());
+        $adminUser = User::where('name', 'Admin User')->first();
+        $adminUser->assignRole('admin');
 
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'pembimbing']);
-        Role::create(['name' => 'penguji']);
-        Role::create(['name' => 'kaprodi']);
-        Role::create(['name' => 'mahasiswa']);
+        $dosenData = Dosen::all();
+        foreach ($dosenData as $dosen) {
+            $user_dosen = User::where('id', $dosen->user_id)->first();
+            $user_dosen->assignRole('dosenPembimbing');
+            $user_dosen->assignRole('dosenPenguji');
+        }
 
-        $roleAdmin = Role::findByName('admin');
-        $roleAdmin->givePermissionTo('lihat-jurusan');
-        $roleAdmin->givePermissionTo('lihat-prodi');
-        $roleAdmin->givePermissionTo('lihat-jabatan_pimpinan');
-        // $roleAdmin->givePermissionTo('lihat-semester_tahun_akademik');
-        // $roleAdmin->givePermissionTo('lihat-kelas');
-        // $roleAdmin->givePermissionTo('lihat-mahasiswa');
-        // $roleAdmin->givePermissionTo('lihat-golongan');
-        // $roleAdmin->givePermissionTo('lihat-dosen');
-        // $roleAdmin->givePermissionTo('lihat-pimpinan');
-        // $roleAdmin->givePermissionTo('lihat-ruangan');
-        // $roleAdmin->givePermissionTo('lihat-sesi');
-        // $roleAdmin->givePermissionTo('lihat-tempat_pkl');
-        // $roleAdmin->givePermissionTo('lihat-role_tempat_pkl');
-        // $roleAdmin->givePermissionTo('lihat-usulan_tempat_pkl');
-        // $roleAdmin->givePermissionTo('lihat-verifikasi_tempat_pkl');
-        // $roleAdmin->givePermissionTo('lihat-mahasiswa_pkl');
+        $kaprodi = Dosen::where('id_dosen', 11)->first();
+        $user_kaprodi = User::where('id', $kaprodi->user_id)->first();
+        $user_kaprodi->assignRole('pimpinanProdi');
 
-
-        $rolePembimbing = Role::findByName('pembimbing');
-        $roleAdmin->givePermissionTo('lihat-mahasiswa_pkl');
+        $mahasiswa = Mahasiswa::all();
+        foreach ($mahasiswa as $mhs) {
+            $user_mahasiswa = User::where('id', $mhs->user_id)->first();
+            $user_mahasiswa->assignRole('mahasiswa');
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dosen;
+use App\Models\Mahasiswa;
 use App\Models\PKLMahasiswa;
 use Illuminate\Http\Request;
 use App\Models\UsulanTempatPKL;
@@ -12,7 +13,11 @@ class PKLMhsController extends Controller
 {
     public function index()
     {
-        $pklmhs = PKLMahasiswa::all();
+        $id_user = auth()->user()->id;
+        $id_mahasiswa = Mahasiswa::where('user_id', $id_user)->first()->id_mahasiswa;
+        $pklmhs = PKLMahasiswa::whereHas('usulan', function ($query) use ($id_mahasiswa) {
+            $query->where('mahasiswa_id', $id_mahasiswa);
+        })->get();
         return view('backend.PKLMhs.index', compact('pklmhs'));
     }
 

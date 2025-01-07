@@ -7,7 +7,7 @@
                 <h1>PKL Nilai</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('dashboard') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="{{ route('pkl-nilai.index') }}">Data PKL Nilai</a></div>
+                    <div class="breadcrumb-item"><a href="{{ route('pkl-nilai-pembimbing.index') }}">Data PKL Nilai</a></div>
                     <div class="breadcrumb-item">Form PKL Nilai</div>
                 </div>
             </div>
@@ -17,7 +17,7 @@
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
                             <form class="form form-vertical" method="POST" enctype="multipart/form-data"
-                                action="{{ route('pkl-nilai.store') }}">
+                                action="{{ route('pkl-nilai-pembimbing.store') }}">
                                 @csrf
                                 <div class="card-header">
                                     <h4>Tambah PKL Nilai</h4>
@@ -35,16 +35,8 @@
                                         </select>
                                     </div>
 
-                                    <!-- Field dosen_id -->
-                                    <div class="form-group">
-                                        <label for="dosen_id">Nama Dosen</label>
-                                        <select id="dosen_id" name="dosen_id" class="form-control">
-                                            <option value="">Pilih Dosen</option>
-                                            @foreach ($dosen as $item)
-                                                <option value="{{ $item->id_dosen }}">{{ $item->nama_dosen }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                    <input type="hidden" name="dosen_id" value="{{$dosen}}">
+                                    <input type="hidden" name="sebagai" value="pembimbing">
 
                                     <!-- Fields nilai -->
                                     <div class="form-group">
@@ -112,25 +104,11 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-                                    <!-- Field sebagai -->
-                                    <div class="form-group">
-                                        <label for="sebagai">Sebagai</label>
-                                        <select id="sebagai" name="sebagai"
-                                            class="form-control @error('sebagai') is-invalid @enderror">
-                                            <option value="">Pilih Peran</option>
-                                            <option value="pembimbing">Pembimbing</option>
-                                            <option value="penguji">Penguji</option>
-                                        </select>
-                                        @error('sebagai')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
                                 </div>
                                 <div class="card-footer text-right">
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                     <button type="reset" class="btn btn-secondary">Reset</button>
-                                    <a href="{{ route('pkl-nilai.index') }}" class="btn btn-warning">
+                                    <a href="{{ route('pkl-nilai-pembimbing.index') }}" class="btn btn-warning">
                                         <i class="fas fa-arrow-left"></i> Back
                                     </a>
                                 </div>

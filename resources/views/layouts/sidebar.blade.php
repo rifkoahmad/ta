@@ -14,7 +14,7 @@
                 <a href="{{ route('dashboard') }}" class="nav-link"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
 
-
+            @hasrole('admin')
             <li class="menu-header">Master</li>
             <li class="dropdown">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i>
@@ -50,6 +50,9 @@
                     <li><a class="nav-link" href="{{ route('kelas.index') }}">Kelas</a></li>
                     <li><a class="nav-link" href="{{ route('ruangan.index') }}">Ruangan</a></li>
                     <li><a class="nav-link" href="{{ route('sesi.index') }}">Sesi</a></li>
+                    <li><a class="nav-link" href="{{ route('tempat-pkl.index') }}">Tempat PKL</a>
+                    </li>
+                    <li><a class="nav-link" href="{{ route('role-tempat-pkl.index') }}">Role Tempat PKL</a></li>
                     {{-- <li><a class="nav-link" href="bootstrap-carousel.html">Carousel</a></li>
                     <li><a class="nav-link" href="bootstrap-collapse.html">Collapse</a></li>
                     <li><a class="nav-link" href="bootstrap-dropdown.html">Dropdown</a></li>
@@ -67,43 +70,74 @@
                     <li><a class="nav-link" href="bootstrap-typography.html">Typography</a></li> --}}
                 </ul>
             </li>
+            @endhasrole
 
-
-            <li class="menu-header">Pekael</li>
+            @hasrole('pimpinanProdi')
+            <li class="menu-header">Kaprodi</li>
             <li class="dropdown">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-th-large"></i>
-                    <span>Data PKL</span></a>
+                <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
+                    <span>PKL</span></a>
                 <ul class="dropdown-menu">
-                    <li><a class="nav-link" href="{{ route('usulan-pkl.index') }}">Usulan PKL</a></li>
-                    <li><a class="nav-link" href="{{ route('verifikasi-usulan-pkl.index') }}">Ver PKL</a></li>
-                    <li><a class="nav-link" href="{{ route('pkl-mahasiswa.index') }}">PKL Mahasiswa KAP</a></li>
-                    <li><a class="nav-link" href="{{ route('pkl-mhs.index') }}">PKL Mahasiswa</a></li>
-                    <li><a class="nav-link" href="{{ route('pkl-nilai.index') }}">PKL Nilai</a></li>
                     <li><a class="nav-link" href="{{ route('booking.index') }}">Booking</a></li>
-                    <li><a class="nav-link" href="{{ route('tempat-pkl.index') }}">Tempat PKL</a>
-                    </li>
-                    <li><a class="nav-link" href="{{ route('role-tempat-pkl.index') }}">Role Tempat PKL</a></li>
-                    <li><a class="nav-link" href="{{ route('logbook.index') }}">LogBook</a>
-                    </li>
-                    <li><a class="nav-link" href="{{ route('logbook-pem.index') }}">LogBook Pembimbing</a></li>
-                    {{-- <li><a class="nav-link beep beep-sidebar" href="components-empty-state.html">EmptyState</a></li>
-                    <li><a class="nav-link" href="components-user.html">User</a></li>
-                    <li><a class="nav-link beep beep-sidebar" href="components-wizard.html">Wizard</a></li> --}}
+                    <li><a class="nav-link" href="{{ route('verifikasi-usulan-pkl.index') }}">Ver PKL</a></li>
+                    <li><a class="nav-link" href="{{ route('pkl-mahasiswa.index') }}">Dosen PKL</a></li>
+                </ul>
+                <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
+                    <span>Sempro</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="{{ route('booking.index') }}">Booking</a></li>
+                    <li><a class="nav-link" href="{{ route('sempro-mhs-kap.index') }}">Sempro Mahasiswa KAP</a></li>
                 </ul>
             </li>
-
-
-
+            @endhasrole
+            @hasrole('dosenPembimbing')
+            <li class="menu-header">Pembimbing</li>
             <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
+                    <span>PKL</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="{{ route('logbook-pem.index') }}">LogBook Pembimbing</a></li>
+                    <li><a class="nav-link" href="{{ route('pkl-nilai-pembimbing.index') }}">PKL Nilai</a></li>
+                </ul>
+                <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
+                    <span>Sempro</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="{{ route('sempro-nilai-pembimbing.index') }}">Sempro Nilai</a></li>
+                </ul>
+            </li>
+            @endhasrole
+            @hasrole('dosenPenguji')
+            <li class="menu-header">Penguji</li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
+                    <span>PKL</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="{{ route('pkl-nilai-penguji.index') }}">PKL Nilai</a></li>
+                </ul>
+                <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
+                    <span>Sempro</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="{{ route('sempro-nilai-penguji.index') }}">Sempro Nilai</a></li>
+                </ul>
+            </li>
+            @endhasrole
+            @hasrole('mahasiswa')
+            <li class="menu-header">Mahasiswa</li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
+                    <span>PKL</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="{{ route('usulan-pkl.index') }}">Usulan PKL</a></li>
+                    <li><a class="nav-link" href="{{ route('pkl-mhs.index') }}">PKL Mahasiswa</a></li>
+                    <li><a class="nav-link" href="{{ route('logbook.index') }}">LogBook</a></li>
+                </ul>
                 <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
                     <span>Sempro</span></a>
                 <ul class="dropdown-menu">
                     <li><a class="nav-link" href="{{ route('sempro-mhs.index') }}">Sempro Mahasiswa</a></li>
-                    <li><a class="nav-link" href="{{ route('sempro-mhs-kap.index') }}">Sempro Mahasiswa KAP</a></li>
-                    <li><a class="nav-link" href="{{ route('sempro-nilai.index') }}">Sempro Nilai</a></li>
                 </ul>
             </li>
-
+            @endhasrole
 
             {{-- <li class="dropdown">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-map-marker-alt"></i>

@@ -32,9 +32,11 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <div class="mt-3">
-                                    <a href="{{ route('pkl-nilai.create') }}" class="btn btn-success">
-                                        <i class="bi bi-plus-circle"></i> Add
-                                    </a>
+                                    @if ($pkl)
+                                        <a href="{{ route('pkl-nilai-pembimbing.create') }}" class="btn btn-success">
+                                            <i class="bi bi-plus-circle"></i> Add
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-body">
@@ -67,11 +69,11 @@
                                                     <td class="align-middle">{{ $item->sebagai }}</td>
                                                     <td class="align-middle">
                                                         <div class="d-flex mt-1">
-                                                            <a href="{{ route('pkl-nilai.edit', $item->id_pkl_nilai) }}"
+                                                            <a href="{{ route('pkl-nilai-pembimbing.edit', $item->id_pkl_nilai) }}"
                                                                 class="btn btn-outline-primary"><i
                                                                     class="fas fa-edit"></i></a>
                                                             <form
-                                                                action="{{ route('pkl-nilai.destroy', $item->id_pkl_nilai) }}"
+                                                                action="{{ route('pkl-nilai-pembimbing.destroy', $item->id_pkl_nilai) }}"
                                                                 method="POST" class="d-inline"
                                                                 onsubmit="return confirm('Anda yakin ingin menghapus data ini?')">
                                                                 @csrf

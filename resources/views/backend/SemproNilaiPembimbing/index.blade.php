@@ -33,9 +33,12 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <div class="mt-3">
-                                    <a href="{{ route('sempro-nilai.create') }}" class="btn btn-success">
-                                        <i class="bi bi-plus-circle"></i> Add
-                                    </a>
+                                    @if ($sempro->IsNotEmpty())
+                                        <a href="{{ route('sempro-nilai-pembimbing.create') }}" class="btn btn-success">
+                                            <i class="bi bi-plus-circle"></i> Add
+                                        </a>
+                                    @endif
+
                                 </div>
                             </div>
                             <div class="card-body">
@@ -69,11 +72,11 @@
                                                     </td>
                                                     <td class="align-middle">
                                                         <div class="d-flex mt-1">
-                                                            <a href="{{ route('sempro-nilai.edit', $item->id_sempro_nilai) }}"
+                                                            <a href="{{ route('sempro-nilai-pembimbing.edit', $item->id_sempro_nilai) }}"
                                                                 class="btn btn-outline-primary"><i
                                                                     class="fas fa-edit"></i></a>
                                                             <form
-                                                                action="{{ route('sempro-nilai.destroy', $item->id_sempro_nilai) }}"
+                                                                action="{{ route('sempro-nilai-pembimbing.destroy', $item->id_sempro_nilai) }}"
                                                                 method="POST" class="d-inline"
                                                                 onsubmit="return confirm('Anda yakin ingin menghapus data ini?')">
                                                                 @csrf

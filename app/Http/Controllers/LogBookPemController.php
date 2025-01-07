@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dosen;
 use App\Models\LogBook;
 use App\Models\PKLMahasiswa;
 use Illuminate\Http\Request;
@@ -10,9 +11,16 @@ class LogBookPemController extends Controller
 {
     public function index()
     {
+        $id_user = auth()->user()->id;
+        $id_dosen = Dosen::where('user_id', $id_user)->first()->id_dosen;
+        $pklmhs = PKLMahasiswa::where('pembimbing_id', $id_dosen)->get();
+        $logbook = LogBook::whereHas('pkl_mahasiswa', function ($query) use ($id_dosen) {
+            $query->where('pembimbing_id', $id_dosen);
+        })->get();
+        // dd($pklmhs->toArray());
         return view('backend.LogBookPem.index', [
-            'logbook' => LogBook::with('pkl_mahasiswa')->get(),
-            'pkl_mahasiswa' => PKLMahasiswa::all()
+            'logbook' => $logbook,
+            'pkl_mahasiswa' => $pklmhs
         ]);
     }
 

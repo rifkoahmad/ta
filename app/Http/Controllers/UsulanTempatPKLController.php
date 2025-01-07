@@ -13,8 +13,10 @@ class UsulanTempatPKLController extends Controller
 {
     public function index()
     {
+        $id_user = auth()->user()->id;
+        $id_mahasiswa = Mahasiswa::where('user_id', $id_user)->first()->id_mahasiswa;
         return view('backend.Usulan.index', [
-            'usulanPKL' => UsulanTempatPKL::with('tempat_pkl', 'mahasiswa', 'role_tempat_pkl')->get(),
+            'usulanPKL' => UsulanTempatPKL::with('tempat_pkl', 'mahasiswa', 'role_tempat_pkl')->where('mahasiswa_id', $id_mahasiswa)->get(),
             'tempat_pkl' => TempatPKL::all(),
             'mahasiswa' => Mahasiswa::all(),
             'role_tempat_pkl' => RoleTempatPKL::all()

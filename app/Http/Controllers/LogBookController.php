@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LogBook;
+use App\Models\Mahasiswa;
 use App\Models\PKLMahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,17 +12,31 @@ class LogBookController extends Controller
 {
     public function index()
     {
+        $id_user = auth()->user()->id;
+        $id_mahasiswa = Mahasiswa::where('user_id', $id_user)->first()->id_mahasiswa;
+        $logbook = LogBook::whereHas('pkl_mahasiswa.usulan', function ($query) use ($id_mahasiswa) {
+            $query->where('mahasiswa_id', $id_mahasiswa);
+        })->get();
+        $pklmhs = PKLMahasiswa::whereHas('usulan', function ($query) use ($id_mahasiswa) {
+            $query->where('mahasiswa_id', $id_mahasiswa);
+        })->get();
+        // dd($pklmhs);
         return view('backend.LogBook.index', [
-            'logbook' => LogBook::with('pkl_mahasiswa')->get(),
-            'pkl_mahasiswa' => PKLMahasiswa::all()
+            'logbook' => $logbook,
+            'pkl_mahasiswa' => $pklmhs,
         ]);
     }
 
     public function create()
     {
+        $id_user = auth()->user()->id;
+        $id_mahasiswa = Mahasiswa::where('user_id', $id_user)->first()->id_mahasiswa;
+        $pklmhs = PKLMahasiswa::whereHas('usulan', function ($query) use ($id_mahasiswa) {
+            $query->where('mahasiswa_id', $id_mahasiswa);
+        })->get();
         return view('backend.LogBook.create', [
             'logbook' => LogBook::with('pkl_mahasiswa')->get(),
-            'pkl_mahasiswa' => PKLMahasiswa::all()
+            'pkl_mahasiswa' => $pklmhs
         ]);
     }
 

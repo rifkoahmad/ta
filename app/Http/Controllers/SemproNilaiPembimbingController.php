@@ -7,22 +7,40 @@ use App\Models\SemproMahasiswa;
 use App\Models\SemproNilai;
 use Illuminate\Http\Request;
 
-class SemproNilaiController extends Controller
+class SemproNilaiPembimbingController extends Controller
 {
     public function index()
     {
-        return view('backend.SemproNilai.index', [
-            'sempro_nilai' => SemproNilai::with('dosen', 'sempro_mhs')->get(),
-            'dosen' => Dosen::all(),
-            'sempro_mhs' => SemproMahasiswa::all(),
+        $id_user = auth()->id();
+        $id_dosen = Dosen::where('user_id', $id_user)->value('id_dosen');
+        $nilaiPembimbing = SemproNilai::whereHas('sempro_mhs', function ($query) use ($id_dosen) {
+            $query->where('pembimbing_1_id', $id_dosen)
+                ->where('pembimbing_2_id', $id_dosen);
+        })->get();
+        $sempro = SemproMahasiswa::where('pembimbing_1_id', $id_dosen)
+            ->OrWhere('pembimbing_2_id', $id_dosen)->get();
+        return view('backend.SemproNilaiPembimbing.index', [
+            'sempro_nilai' => $nilaiPembimbing,
+            'sempro' => $sempro
         ]);
     }
 
     public function create()
     {
-        return view('backend.SemproNilai.create', [
-            'dosen' => Dosen::all(),
-            'sempro_mhs' => SemproMahasiswa::all(),
+        $id_user = auth()->id();
+        $id_dosen = Dosen::where('user_id', $id_user)->value('id_dosen');
+        $sempro = SemproMahasiswa::where('pembimbing_1_id', $id_dosen)
+            ->OrWhere('pembimbing_2_id', $id_dosen)->get();
+        $sebagai = '';
+        if ($sempro && $sempro->pembimbing_1_id === $id_dosen) {
+            $sebagai = 'pembimbing_1';
+        } else {
+            $sebagai = 'pembimbing_2';
+        }
+        return view('backend.SemproNilaiPembimbing.create', [
+            'dosen' => $id_dosen,
+            'sempro_mhs' => $sempro,
+            'sebagai' => $sebagai,
         ]);
     }
 
@@ -63,33 +81,26 @@ class SemproNilaiController extends Controller
             'sebagai' => $request->sebagai,
         ]);
 
-        return redirect()->route('sempro-nilai.index')->with('success', 'Data berhasil disimpan.');
+        return redirect()->route('sempro-nilai-pembimbing.index')->with('success', 'Data berhasil disimpan.');
     }
 
     public function edit(string $id_sempro_nilai)
     {
         $semproNilai = SemproNilai::findOrFail($id_sempro_nilai);
-        $sempro_mhs = SemproMahasiswa::get();
-        $dosen = Dosen::get();
 
-        return view('backend.SemproNilai.edit', [
+        return view('backend.SemproNilaiPembimbing.edit', [
             'semproNilai' => $semproNilai,
-            'sempro_mhs' => $sempro_mhs,
-            'dosen' => $dosen,
         ]);
     }
 
     public function update(Request $request, string $id_sempro_nilai)
     {
         $request->validate([
-            'sempro_mhs_id' => 'required|exists:sempro_mhs,id_sempro_mhs',
-            'dosen_id' => 'required|exists:dosen,id_dosen',
             'pendahuluan' => 'required|numeric|min:0|max:100',
             'tinjauan_pustaka' => 'required|numeric|min:0|max:100',
             'metodologi_penelitian' => 'required|numeric|min:0|max:100',
             'bahasa_dan_tata_tulis' => 'required|numeric|min:0|max:100',
             'presentasi' => 'required|numeric|min:0|max:100',
-            'sebagai' => 'required|in:pembimbing_1,pembimbing_2,penguji',
         ]);
 
         $semproNilai = SemproNilai::findOrFail($id_sempro_nilai);
@@ -111,19 +122,16 @@ class SemproNilaiController extends Controller
         );
 
         $semproNilai->update([
-            'sempro_mhs_id' => $request->sempro_mhs_id,
-            'dosen_id' => $request->dosen_id,
             'nilai' => json_encode(array_merge($nilai, ['total' => $totalNilai])),
-            'sebagai' => $request->sebagai,
         ]);
 
-        return redirect()->route('sempro-nilai.index')->with('success', 'Data berhasil diperbarui.');
+        return redirect()->route('sempro-nilai-pembimbing.index')->with('success', 'Data berhasil diperbarui.');
     }
 
     public function destroy(string $id_sempro_nilai)
     {
         $semproNilai = SemproNilai::findOrFail($id_sempro_nilai);
         $semproNilai->delete();
-        return redirect()->route('sempro-nilai.index')->with('success', 'Data berhasil dihapus.');
+        return redirect()->route('sempro-nilai-pembimbing.index')->with('success', 'Data berhasil dihapus.');
     }
 }
